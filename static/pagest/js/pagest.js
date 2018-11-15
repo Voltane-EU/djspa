@@ -1,5 +1,6 @@
 window.pagest = {
     ...window.pagest,
+    temp: {},
     loader: function(id, active, extra_classes) {
         id += "_loader";
         var loader = document.getElementById(id);
