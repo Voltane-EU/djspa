@@ -1,0 +1,5 @@
+<ph-pages id="ph-pages">
+    {% for name, page in pages.items %}
+        <ph-page id="ph-{{name}}" data-modified="{{page.modified}}" {% if page.cache %} data-cache="1" {% endif %} {% if name != current_page %} hidden {% endif %}>{% if name == current_page %}{% include page.template_name %}{% endif %}</ph-page>
+    {% endfor %}
+</ph-pages>
