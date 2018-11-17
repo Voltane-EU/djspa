@@ -19,3 +19,11 @@ You have to set at least the `name` property, which is the name of the template 
 
 Import the pagest urlpatterns after you defined all views
 `from pagest.urls import urlpatterns # pylint:disable=C0411; urlpatterns of pagest MUST be loaded after all view definitions`
+
+You have to define at least the index page, otherwise you get an endless redirect loop.
+```
+from pagest import PageMixin
+
+class Index(PageMixin):
+    name = 'index'
+```
