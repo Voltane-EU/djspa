@@ -80,6 +80,7 @@ window.pagest = {
     trigger_on_page_show: function(page) {
         if(!page)
             page = this.get_current_page();
+        document.body.dataset.page = page;
         if(page in this.on_page_show)
             this.on_page_show[page]();
     },
