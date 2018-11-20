@@ -98,8 +98,8 @@ window.pagest = {
             path[1] = 'index';
         var page_element = document.getElementById('ph-'+path[1]);
         if(page_element) {
-            this.load_page(path[1]).then(() => {
-                this.show_page(path[1]);
+            pagest.load_page(path[1]).then(() => {
+                pagest.show_page(path[1]);
             }).catch((error) => {
                 console.warn("load_page failed", error);
                 window.location.href = href;
