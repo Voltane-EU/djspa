@@ -114,6 +114,20 @@ window.pagest = {
         window.history.pushState({}, null, url);
         this.on_popstate(null, url);
     },
+    get_param: function(name, remove) {
+        var hash = new URLSearchParams(window.location.hash.substr(1)),
+            re = hash.get(name);
+        if(remove) {
+            hash.delete(name);
+            if(window.location.hash.substr(1) != hash.toString()) {
+                if(hash.toString())
+                    history.replaceState(null, null, "#"+hash.toString());
+                else
+                    history.replaceState(null, null, window.location.pathname);
+            }
+        }
+        return re;
+    },
     init: function() {
         this.trigger_on_page_show();
     },
