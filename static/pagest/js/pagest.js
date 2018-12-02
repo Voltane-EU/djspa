@@ -1,7 +1,7 @@
 window.pagest = {
     ...window.pagest,
     temp: {},
-    loader: function(id, active, extra_classes) {
+    loader: function(id, active, extra_classes, parent) {
         id += "_loader";
         var loader = document.getElementById(id);
         if(active && loader) {
@@ -10,7 +10,7 @@ window.pagest = {
             loader = document.createElement("div");
             loader.id = id;
             loader.className = "loader "+(extra_classes || "");
-            document.body.appendChild(loader);
+            (parent || document.body).appendChild(loader);
         } else if(!active && loader)
             loader.remove();
         return loader;
