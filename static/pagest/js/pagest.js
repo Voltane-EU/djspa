@@ -144,7 +144,6 @@ window.pagest = {
         if(!event.target.closest("a"))
             return;
         var a_elem = event.target.closest("a");
-        console.log("click a", a_elem);
         if(!a_elem.href)
             return;
         var url = new URL(a_elem.href),
