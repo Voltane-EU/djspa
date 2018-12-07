@@ -35,38 +35,41 @@ window.pagest = {
         });
     },
     show_page: function(page) {
-        var pages = document.getElementById('ph-pages'),
-            shown_pages = [],
-            this_page = document.getElementById('ph-'+page);
+        return new Promise((resolve, reject) => {
+            var pages = document.getElementById('ph-pages'),
+                shown_pages = [],
+                this_page = document.getElementById('ph-'+page);
 
-        if(!this_page.hidden)
-            return;
+            if(!this_page.hidden)
+                return resolve();
 
-        this.temp['show_page_hide_timer'] && clearInterval(this.temp['show_page_hide_timer']);
-        this.temp['show_page_show_timer'] && clearInterval(this.temp['show_page_show_timer']);
+            this.temp['show_page_hide_timer'] && clearInterval(this.temp['show_page_hide_timer']);
+            this.temp['show_page_show_timer'] && clearInterval(this.temp['show_page_show_timer']);
 
-        for(var i = 0; i < pages.children.length; i++) {
-            if(!pages.children[i].hidden) {
-                pages.children[i].classList.add("hide");
-                shown_pages.push(pages.children[i]);
-            }
-        }
-        this.temp['show_page_hide_timer'] = setTimeout(() => {
-            requestAnimationFrame(() => {
-                for(var i = 0; i < shown_pages.length; i++) {
-                    shown_pages[i].hidden = true;
-                    shown_pages[i].classList.remove("hide");
-                    this.trigger_on_page_hide(shown_pages[i].id.substr(3));
+            for(var i = 0; i < pages.children.length; i++) {
+                if(!pages.children[i].hidden) {
+                    pages.children[i].classList.add("hide");
+                    shown_pages.push(pages.children[i]);
                 }
-                this_page.classList.add("show");
-                this_page.hidden = false;
-                this.temp['show_page_show_timer'] = setTimeout(() => {
-                    this_page.classList.remove("show");
-                }, 125);
-                window.scrollTo(0, 0);
-                this.trigger_on_page_show(page);
-            });
-        }, 125);
+            }
+            this.temp['show_page_hide_timer'] = setTimeout(() => {
+                requestAnimationFrame(() => {
+                    for(var i = 0; i < shown_pages.length; i++) {
+                        shown_pages[i].hidden = true;
+                        shown_pages[i].classList.remove("hide");
+                        this.trigger_on_page_hide(shown_pages[i].id.substr(3));
+                    }
+                    this_page.classList.add("show");
+                    this_page.hidden = false;
+                    this.temp['show_page_show_timer'] = setTimeout(() => {
+                        this_page.classList.remove("show");
+                    }, 125);
+                    window.scrollTo(0, 0);
+                    this.trigger_on_page_show(page);
+                    resolve();
+                });
+            }, 125);
+        });
     },
     get_current_page: function() {
         var url = new URL(window.location),
@@ -91,28 +94,33 @@ window.pagest = {
             this.on_page_hide[page]();
     },
     on_popstate: function(event, href) {
-        var url = new URL(window.location.href),
+        return new Promise((resolve, reject) => {
+            var url = new URL(window.location.href),
             path = url.pathname.split('/');
-        href = href || window.location.href;
-        if(url.pathname === '/')
-            path[1] = 'index';
-        var page_element = document.getElementById('ph-'+path[1]);
-        if(page_element) {
-            pagest.load_page(path[1]).then(() => {
-                pagest.show_page(path[1]);
-            }).catch((error) => {
-                console.warn("load_page failed", error);
-                window.location.href = href;
-            });
-        }
+            href = href || window.location.href;
+            if(url.pathname === '/')
+                path[1] = 'index';
+            var page_element = document.getElementById('ph-'+path[1]);
+            if(page_element) {
+                pagest.load_page(path[1]).then(() => {
+                    pagest.show_page(path[1]).then(resolve);
+                }).catch((error) => {
+                    console.warn("load_page failed", error);
+                    window.location.href = href;
+                    reject();
+                });
+            }
+        });
     },
     goto: function(url) {
-        if(!url.startsWith("/")) {
-            window.location = url;
-            return;
-        }
-        window.history.pushState({}, null, url);
-        this.on_popstate(null, url);
+        return new Promise((resolve, reject) => {
+            if(!url.startsWith("/")) {
+                window.location = url;
+                return resolve();
+            }
+            window.history.pushState({}, null, url);
+            this.on_popstate(null, url).then(resolve).catch(reject);
+        });
     },
     get_param: function(name, remove) {
         var hash = new URLSearchParams(window.location.hash.substr(1)),
