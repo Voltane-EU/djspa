@@ -116,13 +116,15 @@ window.pagest = {
     },
     goto: function(url) {
         return new Promise((resolve, reject) => {
-            window.dispatchEvent(new CustomEvent("popstate", {detail: {ignore_pagest: true}}));
             if(!url.startsWith("/")) {
                 window.location = url;
                 return resolve();
             }
             window.history.pushState({}, null, url);
-            this.on_popstate(null, url).then(resolve).catch(reject);
+            this.on_popstate({detail: {href: url}}).then(() => {
+                window.dispatchEvent(new CustomEvent("popstate", {detail: {ignore_pagest: true}}));
+                resolve();
+            }).catch(reject);
         });
     },
     get_param: function(name, remove) {
