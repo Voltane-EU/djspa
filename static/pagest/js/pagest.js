@@ -93,11 +93,11 @@ window.pagest = {
         if(page in this.on_page_hide)
             this.on_page_hide[page]();
     },
-    on_popstate: function(event, href) {
+    on_popstate: function(event) {
         return new Promise((resolve, reject) => {
             var url = new URL(window.location.href),
             path = url.pathname.split('/');
-            href = href || window.location.href;
+            href = event && event.detail ? event.detail.href : window.location.href;
             if(url.pathname === '/')
                 path[1] = 'index';
             var page_element = document.getElementById('ph-'+path[1]);
@@ -106,7 +106,7 @@ window.pagest = {
                     pagest.show_page(path[1]).then(resolve);
                 }).catch((error) => {
                     console.warn("load_page failed", error);
-                    window.location.href = href;
+                    window.location.href = event.detail.href;
                     reject();
                 });
             }
@@ -146,7 +146,7 @@ window.pagest = {
         if(document.readyState === 'complete')
             pagest.init();
     });
-    window.addEventListener("popstate", pagest.on_popstate);
+    window.addEventListener("popstate", event => pagest.on_popstate(event));
 
     document.addEventListener("click", function(event) {
         if(!event.target.closest("a"))
@@ -166,7 +166,7 @@ window.pagest = {
         if(page_element) {
             event.preventDefault();
             window.history.pushState({}, null, a_elem.href);
-            pagest.on_popstate(event, a_elem.href);
+            window.dispatchEvent(new CustomEvent("popstate", {detail: a_elem.href}))
         }
     });
 })();
