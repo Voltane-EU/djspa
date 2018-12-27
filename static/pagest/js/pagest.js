@@ -94,10 +94,12 @@ window.pagest = {
             this.on_page_hide[page]();
     },
     on_popstate: function(event) {
+        if(event && event.detail && event.detail.ignore_pagest)
+            return;
         return new Promise((resolve, reject) => {
             var url = new URL(window.location.href),
             path = url.pathname.split('/');
-            href = event && event.detail ? event.detail.href : window.location.href;
+            href = event && event.detail && event.detail.href ? event.detail.href : window.location.href;
             if(url.pathname === '/')
                 path[1] = 'index';
             var page_element = document.getElementById('ph-'+path[1]);
@@ -114,6 +116,7 @@ window.pagest = {
     },
     goto: function(url) {
         return new Promise((resolve, reject) => {
+            window.dispatchEvent(new CustomEvent("popstate", {detail: {ignore_pagest: true}}));
             if(!url.startsWith("/")) {
                 window.location = url;
                 return resolve();
@@ -166,7 +169,7 @@ window.pagest = {
         if(page_element) {
             event.preventDefault();
             window.history.pushState({}, null, a_elem.href);
-            window.dispatchEvent(new CustomEvent("popstate", {detail: a_elem.href}))
+            window.dispatchEvent(new CustomEvent("popstate", {detail: {href: a_elem.href}}));
         }
     });
 })();
