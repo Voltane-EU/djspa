@@ -21,7 +21,7 @@ window.pagest = {
             if(page_element.innerHTML)
                 return resolve();
             this.loader("page-"+page, true, "full");
-            fetch('/get_page/'+page+'?_='+(page_element.dataset.cache ? page_element.dataset.modified : Date.now())).then(async (response) => {
+            fetch('/get_page/'+page+'?_='+(page_element.dataset.cache ? page_element.dataset.modified : Date.now()), {credentials: 'same-origin',}).then(async (response) => {
                 this.loader("page-"+page, false);
                 if(!response.ok)
                     return reject("response_not_ok");
