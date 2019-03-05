@@ -111,7 +111,8 @@ window.pagest = {
                     window.location.href = event.detail.href;
                     reject();
                 });
-            }
+            } else
+                window.location.href = event.detail.href;
         });
     },
     goto: function(url) {
