@@ -127,8 +127,13 @@ window.pagest = {
             }).catch(reject);
         });
     },
-    get_param: function(name, remove) {
-        var hash = new URLSearchParams(window.location.hash.substr(1)),
+    get_param: function(name, remove, type) {
+        if(!type)
+            type = "hash";
+        var query = window.location.hash.substr(1);
+        if(type === "query")
+            query = window.location.search;
+        var hash = new URLSearchParams(query),
             re = hash.get(name);
         if(remove) {
             hash.delete(name);
