@@ -46,8 +46,8 @@ def get_page(request, page):
         response = _pages[page](request=request).get(request)
         response['cache-control'] = 'max-age=315360000'
         if request.GET.get("_"):
-            response['last-modified'] = date_format(datetime.fromtimestamp(int(request.GET.get("_"))), "r")
-            response['expires'] = date_format(datetime.fromtimestamp(int(request.GET.get("_"))) + timedelta(days=365), "r")
+            response['last-modified'] = date_format(datetime.fromtimestamp(int(request.GET.get("_"))), "r", use_l10n=False)
+            response['expires'] = date_format(datetime.fromtimestamp(int(request.GET.get("_"))) + timedelta(days=365), "r", use_l10n=False)
         return response
     except TemplateDoesNotExist:
         return HttpResponseServerError()
