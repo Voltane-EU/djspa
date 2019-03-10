@@ -2,7 +2,6 @@ import logging
 from datetime import datetime, timedelta
 from django.http import HttpResponseForbidden, HttpResponseNotFound, HttpResponseRedirect, HttpResponseServerError
 from django.template.exceptions import TemplateDoesNotExist
-from django.utils.formats import date_format
 from . import BaseView, PageMixin, exceptions
 
 _logger = logging.getLogger(__name__)
@@ -46,8 +45,8 @@ def get_page(request, page):
         response = _pages[page](request=request).get(request)
         response['cache-control'] = 'max-age=315360000'
         if request.GET.get("_"):
-            response['last-modified'] = date_format(datetime.fromtimestamp(int(request.GET.get("_"))), "r", use_l10n=False)
-            response['expires'] = date_format(datetime.fromtimestamp(int(request.GET.get("_"))) + timedelta(days=365), "r", use_l10n=False)
+            response['last-modified'] = datetime.fromtimestamp(int(request.GET.get("_"))).strftime("%a, %d %b %Y %H:%M:%S +0000")
+            response['expires'] = (datetime.fromtimestamp(int(request.GET.get("_"))) + timedelta(days=365)).strftime("%a, %d %b %Y %H:%M:%S +0000")
         return response
     except TemplateDoesNotExist:
         return HttpResponseServerError()
