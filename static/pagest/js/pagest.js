@@ -1,5 +1,4 @@
-window.pagest = {
-    ...window.pagest,
+window.pagest = Object.assign(window.pagest, {
     temp: {},
     loader: function(id, active, extra_classes, parent) {
         id += "_loader";
@@ -150,7 +149,7 @@ window.pagest = {
     init: function() {
         this.trigger_on_page_show();
     },
-};
+});
 
 (function() {
     document.addEventListener("readystatechange", () => {
