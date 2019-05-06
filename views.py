@@ -51,8 +51,8 @@ def get_page(request, page):
     except TemplateDoesNotExist:
         return HttpResponseServerError()
 
-def get_page_view(request, page='index'):
-    return type("PageView", (IndexView, _pages[page],), {})(request=request).get(request)
+def get_page_view(request, page='index', subpage=None):
+    return type("PageView_%s" % page, (_pages[page], IndexView), {})(request=request).get(request, page=page, subpage=subpage)
 
 class IndexView(BaseView):
     template_name = 'index.html'
