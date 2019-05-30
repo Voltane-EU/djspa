@@ -1,8 +1,10 @@
 import os.path
 from django.views import generic
+from django.http import HttpResponseRedirect
 from django.template.loader import get_template
 
 BaseView = None
+page_not_found = HttpResponseRedirect('/')
 
 def set_baseview(cls):
     global BaseView

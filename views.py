@@ -2,7 +2,7 @@ import logging
 from datetime import datetime, timedelta
 from django.http import HttpResponseForbidden, HttpResponseNotFound, HttpResponseRedirect, HttpResponseServerError
 from django.template.exceptions import TemplateDoesNotExist
-from . import BaseView, PageMixin, exceptions
+from . import BaseView, PageMixin, exceptions, page_not_found
 
 _logger = logging.getLogger(__name__)
 
@@ -52,7 +52,10 @@ def get_page(request, page):
         return HttpResponseServerError()
 
 def get_page_view(request, page='index', subpage=None):
-    return type("PageView_%s" % page, (_pages[page], IndexView), {})(request=request).get(request, page=page, subpage=subpage)
+    try:
+        return type("PageView_%s" % page, (_pages[page], IndexView), {})(request=request).get(request, page=page, subpage=subpage)
+    except KeyError:
+        return page_not_found
 
 class IndexView(BaseView):
     template_name = 'index.html'
