@@ -114,13 +114,18 @@ window.pagest = Object.assign(window.pagest, {
                 window.location.href = event.detail.href;
         });
     },
-    goto: function(url) {
+    goto: function(url, replace, data, title) {
+        data = data || {},
+        title = title || null;
         return new Promise((resolve, reject) => {
             if(!url.startsWith("/")) {
                 window.location = url;
                 return resolve();
             }
-            window.history.pushState({}, null, url);
+            if(replace)
+                window.history.replaceState(data, title, url);
+            else
+                window.history.pushState(data, title, url);
             this.on_popstate({detail: {href: url}}).then(() => {
                 window.dispatchEvent(new CustomEvent("popstate", {detail: {ignore_pagest: true}}));
                 resolve();
