@@ -175,6 +175,8 @@ window.pagest = Object.assign(window.pagest, {
             event.preventDefault();
             return;
         }
+        if(url.origin !== window.location.origin)
+            return;
         if(url.pathname === '/')
             path[1] = 'index';
         var page_element = document.getElementById('ph-'+path[1]);
