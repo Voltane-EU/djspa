@@ -1,4 +1,4 @@
-window.pagest = Object.assign(window.pagest, {
+window.djspa = Object.assign(window.djspa, {
     temp: {},
     loader: function(id, active, extra_classes, parent) {
         id += "_loader";
@@ -93,7 +93,7 @@ window.pagest = Object.assign(window.pagest, {
             this.on_page_hide[page]();
     },
     on_popstate: function(event) {
-        if(event && event.detail && event.detail.ignore_pagest)
+        if(event && event.detail && event.detail.ignore_djspa)
             return;
         return new Promise((resolve, reject) => {
             var url = new URL(window.location.href),
@@ -103,8 +103,8 @@ window.pagest = Object.assign(window.pagest, {
                 path[1] = 'index';
             var page_element = document.getElementById('ph-'+path[1]);
             if(page_element) {
-                pagest.load_page(path[1]).then(() => {
-                    pagest.show_page(path[1]).then(resolve);
+                djspa.load_page(path[1]).then(() => {
+                    djspa.show_page(path[1]).then(resolve);
                 }).catch((error) => {
                     console.warn("load_page failed", error);
                     window.location.href = event.detail.href;
@@ -127,7 +127,7 @@ window.pagest = Object.assign(window.pagest, {
             else
                 window.history.pushState(data, title, url);
             this.on_popstate({detail: {href: url}}).then(() => {
-                window.dispatchEvent(new CustomEvent("popstate", {detail: {ignore_pagest: true}}));
+                window.dispatchEvent(new CustomEvent("popstate", {detail: {ignore_djspa: true}}));
                 resolve();
             }).catch(reject);
         });
@@ -159,9 +159,9 @@ window.pagest = Object.assign(window.pagest, {
 (function() {
     document.addEventListener("readystatechange", () => {
         if(document.readyState === 'complete')
-            pagest.init();
+            djspa.init();
     });
-    window.addEventListener("popstate", event => pagest.on_popstate(event));
+    window.addEventListener("popstate", event => djspa.on_popstate(event));
 
     document.addEventListener("click", function(event) {
         if(!event.target.closest("a"))
